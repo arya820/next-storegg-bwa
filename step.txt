@@ -1,0 +1,9 @@
+npm i axios
+tambahkan .env
+perubahan di next.config.js
+npm i react-number-format
+menampilkan pesan error atau berhasil:
+npm i react-toastify
+yarn add react-toastify
+npm i js-cookie
+yarn add jwt-decode
