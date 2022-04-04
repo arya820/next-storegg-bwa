@@ -1,9 +1,12 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable no-shadow */
 import Cookies from 'js-cookie';
 import jwtDecode from 'jwt-decode';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-
+import { useRouter } from 'next/router';
+import { jwtPayloadTypes, UserTypes } from '../../../services/data-types';
 // interface AuthItem {
 //     isLogin?: boolean;
 // }
@@ -13,18 +16,28 @@ export default function Auth() {
   const [user, setUser] = useState({
     avatar: '',
   });
+  const router = useRouter();
   useEffect(() => {
     const token = Cookies.get('token');
     if (token) {
       const jwtToken = Buffer.from(token, 'base64').toString('utf8');
-      const payload = jwtDecode(jwtToken);
-      const user = payload.player;
+      const payload: jwtPayloadTypes = jwtDecode(jwtToken);
+      const userFromPayload: UserTypes = payload.player;
       const IMG = process.env.NEXT_PUBLIC_IMG;
-      user.avatar = `${IMG}/${user.avatar}`;
+      user.avatar = `${IMG}/${userFromPayload.avatar}`;
       setIsLogin(true);
       setUser(user);
+      // jika file image disimpan di cloud aws
+      // hapus line 26 dan 27
+      // setUser(userFromPayload)
     }
   }, []);
+
+  const onLogout = () => {
+    Cookies.remove('token');
+    router.push('/');
+    setIsLogin(false);
+  };
   if (isLogin) {
     return (
       <li className="nav-item my-auto dropdown d-flex">
@@ -55,7 +68,7 @@ export default function Auth() {
                 <a className="dropdown-item text-lg color-palette-2">Account Settings</a>
               </Link>
             </li>
-            <li><Link href="/sign-in"><a className="dropdown-item text-lg color-palette-2">Log Out</a></Link></li>
+            <li onClick={onLogout}><a className="dropdown-item text-lg color-palette-2">Log Out</a></li>
           </ul>
         </div>
       </li>

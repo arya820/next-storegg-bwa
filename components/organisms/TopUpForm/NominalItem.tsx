@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import NumberFormat from 'react-number-format';
 
 interface nominalItemProps {
@@ -5,16 +7,18 @@ interface nominalItemProps {
     coinName: string;
     price: number;
     _id: string;
+    onChange: () => void;
 }
 
 export default function NominalItem(nominalProps: nominalItemProps) {
   const {
-    coinQuantity, coinName, price, _id,
+    coinQuantity, coinName, price, _id, onChange,
   } = nominalProps;
   return (
     <label
       className="col-lg-4 col-sm-6 ps-md-15 pe-md-15 pt-md-15 pb-md-15 pt-10 pb-10"
       htmlFor={_id}
+      onChange={onChange}
     >
       <input className="d-none" type="radio" id={_id} name="topup" value={_id} />
       <div className="detail-card">

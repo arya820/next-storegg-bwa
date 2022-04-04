@@ -1,7 +1,21 @@
+import { useCallback, useEffect, useState } from 'react';
+import { TopupCategoriesTypes, historyTransactionTypes } from '../../../services/data-types';
+import { getMemberOverview } from '../../../services/member';
 import Category from './Category';
 import TableRow from './TableRow';
 
 export default function OverviewContent() {
+  const [count, setCount] = useState([]);
+  const [overview, setOverview] = useState([]);
+  const getMemberOverviewAPI = useCallback(async () => {
+    const response = await getMemberOverview();
+    setCount(response.data.count);
+    setOverview(response.data.data);
+    // console.log(overview);
+  }, []);
+  useEffect(() => {
+    getMemberOverviewAPI();
+  }, []);
   return (
     <main className="main-wrapper">
       <div className="ps-lg-0">
@@ -10,24 +24,17 @@ export default function OverviewContent() {
           <p className="text-lg fw-medium color-palette-1 mb-14">Top Up Categories</p>
           <div className="main-content">
             <div className="row">
-              <Category icon="desktop" nominal={18000500}>
-                Game
-                <br />
-                {' '}
-                Desktop
-              </Category>
-              <Category icon="mobile" nominal={8455000}>
-                Game
-                <br />
-                {' '}
-                Mobile
-              </Category>
-              <Category icon="desktop" nominal={5000000}>
-                Other
-                <br />
-                {' '}
-                Categories
-              </Category>
+              {count.map((item: TopupCategoriesTypes) => {
+                // console.log(item);
+                return (
+                  <Category icon="desktop" key={item._id} nominal={item.value}>
+                    Game
+                    <br />
+                    {item.name}
+                  </Category>
+
+                );
+              })}
             </div>
           </div>
         </div>
@@ -44,10 +51,19 @@ export default function OverviewContent() {
                 </tr>
               </thead>
               <tbody>
-                <TableRow title="Mobile Legends: The New Battle 2021" category="Desktop" item={200} price={290000} status="Pending" image="overview-1" />
-                <TableRow title="Call of Duty: Modern" category="Desktop" item={550} price={740000} status="Success" image="overview-2" />
-                <TableRow title="Clash of Clans" category="Mobile" item={100} price={120000} status="Failed" image="overview-3" />
-                <TableRow title="The Royal Game" category="Mobile" item={225} price={200000} status="Pending" image="overview-4" />
+                {overview.map((item: historyTransactionTypes) => {
+                  return (
+                    <TableRow
+                      key={item._id}
+                      title={item.historyVoucherTopup.gameName}
+                      category={item.historyVoucherTopup.category}
+                      item={`${item.historyVoucherTopup.coinQuantity} ${item.historyVoucherTopup.coinName}`}
+                      price={item.value}
+                      status={item.status}
+                      image={item.historyVoucherTopup.thumbnail}
+                    />
+                  );
+                })}
 
               </tbody>
             </table>

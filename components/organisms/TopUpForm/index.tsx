@@ -1,4 +1,7 @@
-import { NominalsTypes, PaymentTypes } from '../../../services/data-types';
+import { useState } from 'react';
+import { useRouter } from 'next/router';
+import { toast } from 'react-toastify';
+import { BanksTypes, NominalsTypes, PaymentTypes } from '../../../services/data-types';
 import NominalItem from './NominalItem';
 import PaymentItem from './PaymentItem';
 
@@ -8,10 +11,48 @@ interface TUFormPropsItem {
 }
 
 export default function TopUpForm(TUFormProps: TUFormPropsItem) {
+  const [verifyID, setVerifyID] = useState('');
+  const [bankAccName, setBankAccName] = useState('');
+  const [nominalItem, setNominalItem] = useState({});
+  const [paymentItem, setPaymentItem] = useState({});
+  const router = useRouter();
   const { nominals, payments } = TUFormProps;
   // console.log(payments);
+  const onNominalItemChange = (data: NominalsTypes) => {
+    // console.log('data:', data);
+    setNominalItem(data);
+  };
+  const onPaymentItemChange = (payment: PaymentTypes, bank: BanksTypes) => {
+    // console.log('data-payment: ', payment);
+    // console.log('data-payment: ', bank);
+    const data = {
+      payment,
+      bank,
+    };
+    setPaymentItem(data);
+  };
+  const onSubmit = () => {
+    // console.log(verifyID);
+    // console.log(bankAccName);
+    // console.log('Nominal item: ', nominalItem);
+    // console.log('payment item: ', paymentItem);
+    if (verifyID === '' || bankAccName === '' || nominalItem === {} || paymentItem === {}) {
+      toast.error('Silahkan isi semua data');
+    } else {
+      const data = {
+        verifyID,
+        bankAccName,
+        nominalItem,
+        paymentItem,
+      };
+      localStorage.setItem('data-topup', JSON.stringify(data));
+      router.push('/checkout');
+    }
+    // localStorage.setItem('nominal-item', JSON.stringify(data));
+    // localStorage.setItem('payment-item', JSON.stringify(data));
+  };
   return (
-    <form action="/checkout" method="POST">
+    <form action="" method="POST">
       <div className="pt-md-50 pt-30">
         <div className="">
           <label htmlFor="ID" className="form-label text-lg fw-medium color-palette-1 mb-10">
@@ -26,6 +67,8 @@ export default function TopUpForm(TUFormProps: TUFormPropsItem) {
             name="ID"
             aria-describedby="verifyID"
             placeholder="Enter your ID"
+            value={verifyID}
+            onChange={(event) => setVerifyID(event.target.value)}
           />
         </div>
       </div>
@@ -40,6 +83,7 @@ export default function TopUpForm(TUFormProps: TUFormPropsItem) {
                 coinName={nominal.coinName}
                 price={nominal.price}
                 _id={nominal._id}
+                onChange={() => onNominalItemChange(nominal)}
               />
             );
           })}
@@ -59,6 +103,7 @@ export default function TopUpForm(TUFormProps: TUFormPropsItem) {
                   bankID={bank._id}
                   type={payment.type}
                   bankName={bank.bankName}
+                  onChange={() => onPaymentItemChange(payment, bank)}
                 />
               );
             }))}
@@ -83,17 +128,19 @@ export default function TopUpForm(TUFormProps: TUFormPropsItem) {
           name="bankAccount"
           aria-describedby="bankAccount"
           placeholder="Enter your Bank Account Name"
+          value={bankAccName}
+          onChange={(event) => setBankAccName(event.target.value)}
         />
       </div>
       <div className="d-sm-block d-flex flex-column w-100">
-        <a
-          href="/checkout"
-          type="submit"
+        <button
+          type="button"
           className="btn btn-submit rounded-pill fw-medium text-white border-0 text-lg"
+          onClick={onSubmit}
         >
           Continue
 
-        </a>
+        </button>
         {/* <button type="submit"
                 className="btn btn-submit rounded-pill
                 fw-medium text-white border-0 text-lg">Continue</button> */}

@@ -25,6 +25,7 @@ export default function Detail() {
     const data = await getDetailVoucher(id);
     // console.log(data.payment);
     setDataItem(data);
+    localStorage.setItem('data-item', JSON.stringify(data));
     setNominals(data.voucher.nominals);
     setPayments(data.payment);
   }, []);

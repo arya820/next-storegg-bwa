@@ -1,4 +1,6 @@
 import axios from 'axios';
+import callAPI from '../config/api';
+import { checkoutTypes } from './data-types';
 // import dotenv from 'dotenv';
 
 // dotenv.config();
@@ -24,4 +26,14 @@ export async function getGameCategory() {
   const response = await axios.get(`${ROOT_API}/${API_VERSION}/${URL}`);
   const axiosResponse = response.data;
   return axiosResponse.data;
+}
+
+export async function setCheckout(data: checkoutTypes) {
+  const url = `${ROOT_API}/${API_VERSION}/players/checkout`;
+  return callAPI({
+    url,
+    method: 'post',
+    data,
+    token: true,
+  });
 }

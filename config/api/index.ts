@@ -1,10 +1,27 @@
 import axios, { AxiosRequestConfig } from 'axios';
+import Cookies from 'js-cookie';
 
-export default async function callAPI({ url, method, data }: AxiosRequestConfig) {
+interface CallAPIprops extends AxiosRequestConfig {
+  token?: boolean;
+}
+export default async function callAPI({
+  url, method, data, token,
+}: CallAPIprops) {
+  let headers = {};
+  if (token) {
+    const tokenCookies = Cookies.get('token');
+    if (tokenCookies) {
+      const jwtToken = Buffer.from(tokenCookies, 'base64').toString('utf8');
+      headers = {
+        Authorization: `Bearer ${jwtToken}`,
+      };
+    }
+  }
   const response = await axios({
     url,
     method,
     data,
+    headers,
   }).catch((err) => err.response);
   if (response.status > 300) {
     const res = {
@@ -14,10 +31,13 @@ export default async function callAPI({ url, method, data }: AxiosRequestConfig)
     };
     return res;
   }
+  // mencari panjang data api
+  // misal dalam data api, terdapat data dan count
+  const { length } = Object.keys(response.data);
   const res = {
     error: false,
     message: 'success',
-    data: response.data.data,
+    data: length > 1 ? response.data : response.data.data,
   };
   return res;
 }
