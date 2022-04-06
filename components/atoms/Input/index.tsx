@@ -1,4 +1,6 @@
-interface InputItem {
+import { InputHTMLAttributes } from 'react';
+
+interface InputItem extends InputHTMLAttributes<HTMLInputElement> {
     label: string;
 }
 export default function Input(InputProps: InputItem) {

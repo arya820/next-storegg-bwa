@@ -7,3 +7,4 @@ npm i react-toastify
 yarn add react-toastify
 npm i js-cookie
 yarn add jwt-decode
+lihat di tsconfig.json, jika ada file yang tidak dibuild misal: storybook, masukkan di exclude 

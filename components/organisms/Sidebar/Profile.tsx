@@ -15,16 +15,13 @@ export default function Profile() {
       const jwtToken = Buffer.from(token, 'base64').toString('utf8');
       const payload: jwtPayloadTypes = jwtDecode(jwtToken);
       const userFromPayload: UserTypes = payload.player;
-      const IMG = process.env.NEXT_PUBLIC_IMG;
-      user.avatar = `${IMG}/${userFromPayload.avatar}`;
-      user.name = userFromPayload.name;
-      user.email = userFromPayload.email;
-      setUser(user);
+      setUser(userFromPayload);
     }
   }, []);
+  const IMG = process.env.NEXT_PUBLIC_IMG;
   return (
     <div className="user text-center pb-50 pe-30">
-      <img src={user.avatar} width="90" height="90" className="img-upload mb-20" alt="profile" />
+      <img src={`${IMG}/${user.avatar}`} width="90" height="90" className="img-upload mb-20" alt="profile" />
       <h2 className="fw-bold text-xl color-palette-1 m-0">{user.name}</h2>
       <p className="color-palette-2 m-0">{user.email}</p>
     </div>

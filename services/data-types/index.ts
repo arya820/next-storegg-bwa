@@ -39,7 +39,7 @@ export interface UserTypes {
     username: string,
     email: string,
     name: string,
-    phoneNumber: number,
+    phoneNumber: string,
     avatar: string
 }
 export interface jwtPayloadTypes {
@@ -61,24 +61,35 @@ export interface GetServerSideProps {
         cookies: {
             token: string;
         }
-    }
+    },
 }
 
 export interface TopupCategoriesTypes {
     _id: string;
     name: string;
     value: number;
-  }
+}
 export interface historyVoucherTopupTypes {
     gameName: string;
     category: string;
     coinQuantity: number;
     coinName: string;
     thumbnail: string;
+    price?: string;
+}
+export interface HistoryPaymentTypes {
+    bankName: string;
+    name: string;
+    noRekening: string;
+    type: string;
 }
 export interface historyTransactionTypes {
     _id: string;
     historyVoucherTopup: historyVoucherTopupTypes;
     status: string;
     value: number;
+    accountUser?: string;
+    tax?: number;
+    name?: string;
+    historyPayment?: HistoryPaymentTypes;
 }
